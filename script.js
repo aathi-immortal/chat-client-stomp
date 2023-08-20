@@ -1,41 +1,55 @@
-const socket = new SockJS('https://chatserverstomp.azurewebsites.net/ws');
-const stompClient = Stomp.over(socket);
-let mm;
-stompClient.connect({},(frame)=>
-{
-    console.log("connect" + frame);
-    console.log("fhytyty");
-    stompClient.subscribe("/chatroom",(message)=>
-{
- console.log(message);   
- console.log("kooooooooooooooooooooo");
-    message = JSON.parse(message.body);
-    displayMessage(message);
-    
+
+var stompClient = null;
+var notificationCount = 0;
+
+$(document).ready(function() {
+    console.log("Index page is ready");
+    connect();
+
+    document.getElementById("send").addEventListener("click",(event)=>
+    {
+        event.preventDefault();
+        sendMessage();
+    })
+
 });
 
-const publicMessage = { content: "Hello, public chat!" };
-stompClient.send('/app/message', {}, JSON.stringify(publicMessage));
+function connect() {
+    var socket = new SockJS("https://chatserverstomp.azurewebsites.net/ws");
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
 
+        stompClient.subscribe('/chatroom/public', function (message) {
+            message = JSON.parse(message.body);
+            message = message.messageContent;
+            displayMessage(message);
+            
+            
+        });
 
         
-});
+    });
+}
+
+
+
+function sendMessage() {
+    console.log("sending message");
+    message =  JSON.stringify({'messageContent': $("#message-input").val()});
+    
+    stompClient.send("/app/message", {},message);
+}
+
+
+
 function displayMessage(message)
 {
-const chatBox = document.getElementById("chat-box");
-const button = document.getElementById("send-button")
-button.innerHTML = "hhhhh";
-console.log("inside the display" + message.content);
-chatBox.innerHTML = message;
+    if(message.trim() != "")
+    {
+        const chatBox = document.getElementById("chat");
+chatBox.innerHTML += `<div class="col">${message}</div>`;
+    }
 }    
 
-// stompClient.send("/app/message",{},JSON.stringify({content:"hello frds"}));
 
-
-
-
-// if(stompClient.connected)
-// {
-    
-// }
-// console.log("jijiji");
