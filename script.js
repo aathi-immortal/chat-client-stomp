@@ -8,6 +8,7 @@ $(document).ready(function() {
 
     document.getElementById("send").addEventListener("click",(event)=>
     {
+        
         event.preventDefault();
         sendMessage();
     })
@@ -43,13 +44,14 @@ function sendMessage() {
 
 
 
-function displayMessage(message)
-{
-    if(message.trim() != "")
-    {
-        const chatBox = document.getElementById("chat");
-chatBox.innerHTML += `<div class="col">${message}</div>`;
-    }
-}    
+function displayMessage(messageContent) {
+    // if()
+    let card = document.getElementById("message-list");
+    
+    card.innerHTML += `<div><p>${messageContent}</p></div>`;
+
+
+
+} 
 
 
